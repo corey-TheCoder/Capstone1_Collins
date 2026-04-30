@@ -10,6 +10,7 @@ public class TransactionService {
 
     //MY METHODS
 
+    //input/scanner
     public static void ledgerScreen(List<Transaction> transactions, Scanner scanner){
         //ledger menu
         while (true){
@@ -19,7 +20,8 @@ public class TransactionService {
             System.out.println("P.) Display due payments");
             System.out.println("R.) Display Reports");
             System.out.println("H.) Exit to HOME SCREEN");
-            String choice = scanner.nextLine().toUpperCase();
+            System.out.print("Enter a letter to continue: ");
+            String choice = scanner.nextLine().trim().toUpperCase();
 
             switch (choice){
                 case "A":
@@ -43,17 +45,18 @@ public class TransactionService {
 
         }
     }
+    //input/scanner
     public static void addDeposit(List<Transaction> transactions, Scanner scanner) {
         System.out.println("\n==== Deposit Screen ====");
 
         //logging local date and time
         LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        LocalTime time = LocalTime.now().withNano(0);
 
         //prompting desc
         String description;
         while(true){
-            System.out.println("Enter a description: ");
+            System.out.print("Enter a description: ");
             description = scanner.nextLine().trim();
 
             //defense
@@ -62,23 +65,23 @@ public class TransactionService {
                 break;
             }else
             {
-                System.out.println("This field cannot be blank, try again");
+                System.out.println("\nThis field cannot be blank, try again");
             }
         }
 
         //prompting vendor
         String vendor;
         while(true){
-            System.out.println("Enter the vendor name: ");
+            System.out.print("Enter the vendor name: ");
             vendor = scanner.nextLine().trim();
 
             //if input is not blank
-            if (!vendor.isBlank()){
+            if (!vendor.isEmpty()){
                 //accept
                 break;
             }
             else {
-                System.out.println("This field cannot be blank, try again");
+                System.out.println("\nThis field cannot be blank, try again");
             }
         }
 
@@ -86,7 +89,7 @@ public class TransactionService {
         while (true) {
 
             //prompting amount
-            System.out.print("Enter amount:");
+            System.out.print("\nEnter amount: ");
 
             try {
                 //attempt to parse
@@ -96,46 +99,92 @@ public class TransactionService {
                 if (amount > 0) {
                     break;
                 } else {
-                    System.out.println("Amount should be greater than 0.");
+                    System.out.println("\nAmount should be greater than 0.");
                 }
             } catch (NumberFormatException ex) {
-                System.out.println("Invalid input, enter numbers only");
+                System.out.println("\nInvalid input, enter numbers only");
             }
         }
 
             //creating transaction
             Transaction transaction = new Transaction(date, time, description, vendor, amount);
-            //adding
-            transactions.add(transaction);
-            //writing to file
-            FileManager.writeTransaction(transaction);
+            //adding and writing to file
+            saveTransaction(transactions, transaction);
             //confirmation
-            System.out.println("Deposit added!");
+            System.out.println("\nDeposit successful!");
         }
 
+        //input/scanner
     public static void makePayment(List<Transaction> transactions, Scanner scanner){
         System.out.println("\n==== Payment Screen ====");
         //logging local date and time
         LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
-        //prompting user for info
-        System.out.print("Enter the description:");
-        String description = scanner.nextLine();
-        System.out.print("Enter the vendor:");
-        String vendor = scanner.nextLine();
-        System.out.print("Enter amount:");
-        double amount = Double.parseDouble(scanner.nextLine());
+        //readibility
+        LocalTime time = LocalTime.now().withNano(0);
+
+        //prompting desc
+        String description;
+        while(true){
+            System.out.print("\nEnter a description: ");
+            description = scanner.nextLine().trim();
+
+            //defense
+            //if input is not blank, accept
+            if (!description.isEmpty()){
+                break;
+            }else
+            {
+                System.out.println("\nThis field cannot be blank, try again");
+            }
+        }
+
+        //prompting vendor
+        String vendor;
+        while(true){
+            System.out.print("\nEnter the vendor name: ");
+            vendor = scanner.nextLine().trim();
+
+            //if input is not blank
+            if (!vendor.isEmpty()){
+                //accept
+                break;
+            }
+            else {
+                System.out.println("\nThis field cannot be blank, try again");
+            }
+        }
+
+        double amount;
+        while (true) {
+
+            //prompting amount
+            System.out.print("\nEnter amount: ");
+
+            try {
+                //attempt to parse
+                amount = Double.parseDouble(scanner.nextLine().trim());
+
+                //positive numbers
+                if (amount > 0) {
+                    break;
+                } else {
+                    System.out.println("\nAmount should be greater than 0.");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println("\nInvalid input, enter numbers only");
+            }
+        }
+        //payments must be negative
         amount = -(amount);
         //creating transaction
         Transaction transaction = new Transaction(date, time, description, vendor, amount);
-        //adding
-        transactions.add(transaction);
-        //writing to file
-        FileManager.writeTransaction(transaction);
-        //confirmation
-        System.out.println("Payment recorded");
+        //adding and writing to file
+        saveTransaction(transactions, transaction);
+        System.out.println("\nPayment successful");
     }
+    // no input/ just list
     public static void displayEntries(List<Transaction> transactions){
+        System.out.println("\n==== Transactions ====");
         //lists append to end, looping from the end for earlier results
         for (int i = transactions.size()-1; i >=0; i--){
             //get object at that index
@@ -145,7 +194,9 @@ public class TransactionService {
             System.out.println(transaction.toString());
         }
     }
+    //no input just list
     public static void filterDeposits(List<Transaction> transactions) {
+        System.out.println("\n==== Deposits ====");
         for (int i = transactions.size() - 1; i >= 0; i--) {
             //get object at that index
             Transaction transaction = transactions.get(i);
@@ -155,6 +206,7 @@ public class TransactionService {
             }
         }
     }
+    //no input just list
     public static void filterPayments(List<Transaction> transactions) {
         for (int i = transactions.size() - 1; i >= 0; i--) {
             //get object at that index
@@ -166,34 +218,38 @@ public class TransactionService {
         }
     }
 
+    //input/scanner
     public static void runReports(List<Transaction> transactions, Scanner scanner){
 
-        int choice;
+
         while(true) {
             System.out.println("\n==== Reports Menu ====");
             System.out.println("1.) Month to date inquiries");
             System.out.println("2.) Previous month inquiries");
             System.out.println("3.) Year to date inquiries");
             System.out.println("4.) Previous year inquiries");
-            System.out.println("5.) Search by company name:");
+            System.out.println("5.) Search by vendor: ");
             System.out.println("0.) Back to Ledger Menu");
-            System.out.println("Enter a number to continue");
 
+
+            int choice;
             //DEFENSE
-            try {
-                //.trim() removes any unnecessary spaces before after entries
-                choice = Integer.parseInt(scanner.nextLine().trim());
+            while (true) {
+                System.out.print("Enter a number to continue: ");
+                try {
+                    //.trim() removes any unnecessary spaces before after entries
+                    choice = Integer.parseInt(scanner.nextLine().trim());
 
-                //defense
-                if (choice >= 0 && choice <= 5)
-                    break;
-                else {
-                    System.out.println("Please enter a number from 0 - 5.");
+                    //defense
+                    if (choice >= 0 && choice <= 5)
+                        break;
+                    else {
+                        System.out.println("\nPlease enter a number from 0 - 5.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("\nInvalid input. Number from 0 - 5 only.");
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Number from 0 - 5 only.");
             }
-        }
 
 
             switch (choice) {
@@ -219,8 +275,10 @@ public class TransactionService {
                     System.out.println("Please choose a number 0 - 5 to continue");
                     break;
             }
+        }
 
     }
+    //no input just list
     public static void monthToDate(List<Transaction> transactions){
         LocalDate today = LocalDate.now();
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -233,6 +291,7 @@ public class TransactionService {
             }
         }
     }
+    //no input just list
     public static void prevMonth(List<Transaction> transactions){
         //today's date, can be compared to current month and year
         LocalDate today = LocalDate.now();
@@ -264,7 +323,7 @@ public class TransactionService {
 
         }
     }
-
+    //no input just list
     public static void yearToDate(List<Transaction> transactions){
         LocalDate today = LocalDate.now();
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -289,9 +348,13 @@ public class TransactionService {
         }
     }
     public static void searchByVendor(List<Transaction> transactions, Scanner scanner){
+
+
+        //defensive variable
+        boolean isFound = false;
         //USER input
-        System.out.println("Enter the vendor name: ");
-        String vendor = scanner.nextLine();
+        System.out.print("Enter the vendor name: ");
+        String vendor = scanner.nextLine().trim();
 
         for (int i = transactions.size() - 1; i >= 0; i--) {
             //get object at that index
@@ -300,9 +363,18 @@ public class TransactionService {
             //vendor
             if (transaction.getVendor().equalsIgnoreCase(vendor)){
                 System.out.println(transaction);
+                //when vendor is found, change status to true for IF
+                isFound = true;
             }
         }
+        if (!isFound){
+            System.out.println("No transactions under that name.");
+        }
 
+    }
+    public static void saveTransaction(List<Transaction> transactions, Transaction transaction){
+        transactions.add(transaction);
+        FileManager.writeTransaction(transaction);
     }
 
 

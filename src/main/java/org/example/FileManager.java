@@ -33,7 +33,7 @@ public class FileManager {
             }
             reader.close();
 
-        }catch (IOException e){
+        }catch (Exception e){
             System.out.println("Error reading file");
         }
 
@@ -47,7 +47,7 @@ public class FileManager {
                 fileWriter.write(System.lineSeparator());
             }
 
-            fileWriter.write(String.format("%s|%s|%s|%s|%f", transaction.getDate(), transaction.getTime(), transaction.getDescription(),
+            fileWriter.write(String.format("%s | %s | %s | %s | $%.2f", transaction.getDate(), transaction.getTime(), transaction.getDescription(),
                     transaction.getVendor(), transaction.getAmount()));
 
             fileWriter.close();

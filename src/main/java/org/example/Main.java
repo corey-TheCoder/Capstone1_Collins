@@ -24,7 +24,7 @@ public class Main {
             System.out.println("L.) to display the Ledger screen");
             System.out.println("X.) to exit");
             System.out.print("Enter a letter to continue: ");
-            String choice = scanner.nextLine().toUpperCase();
+            String choice = scanner.nextLine().trim().toUpperCase();
 
             switch(choice){
                 case "D":
