@@ -59,4 +59,11 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s | %s | %s | %s | %.2f",
+                date, time, description, vendor, amount);
+    }
 }
+
