@@ -4,7 +4,6 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static org.example.Main.scanner;
 
 
 public class TransactionService {
@@ -33,42 +32,89 @@ public class TransactionService {
                     filterPayments(transactions);
                     break;
                 case "R":
-                    runReports(transactions);
+                    runReports(transactions, scanner);
                     break;
-//                case "H":
-//                    // should i throw the home menu into a method as well and just call it on
-//                    //the MAIN?
-//                    return;
+                case "H":
+                    //returning to previous page
+                    return;
                 default:
                     System.out.println("Please select from the menu options above");
             }
 
         }
     }
-    public static void addDeposit(List<Transaction> transactions, Scanner scanner){
+    public static void addDeposit(List<Transaction> transactions, Scanner scanner) {
         System.out.println("\n==== Deposit Screen ====");
+
         //logging local date and time
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
-        //prompting user for info
-        System.out.print("Enter the description:");
-        String description = scanner.nextLine();
-        System.out.print("Enter the vendor:");
-        String vendor = scanner.nextLine();
-        System.out.print("Enter amount:");
-        double amount = Double.parseDouble(scanner.nextLine());
 
-        //creating transaction
-        Transaction transaction = new Transaction(date, time, description, vendor, amount);
-        //adding
-        transactions.add(transaction);
-        //writing to file
-        FileManager.writeTransaction(transaction);
-        //confirmation
-        System.out.println("Deposit added!");
-    }
+        //prompting desc
+        String description;
+        while(true){
+            System.out.println("Enter a description: ");
+            description = scanner.nextLine().trim();
+
+            //defense
+            //if input is not blank, accept
+            if (!description.isEmpty()){
+                break;
+            }else
+            {
+                System.out.println("This field cannot be blank, try again");
+            }
+        }
+
+        //prompting vendor
+        String vendor;
+        while(true){
+            System.out.println("Enter the vendor name: ");
+            vendor = scanner.nextLine().trim();
+
+            //if input is not blank
+            if (!vendor.isBlank()){
+                //accept
+                break;
+            }
+            else {
+                System.out.println("This field cannot be blank, try again");
+            }
+        }
+
+        double amount;
+        while (true) {
+
+            //prompting amount
+            System.out.print("Enter amount:");
+
+            try {
+                //attempt to parse
+                amount = Double.parseDouble(scanner.nextLine().trim());
+
+                //positive numbers
+                if (amount > 0) {
+                    break;
+                } else {
+                    System.out.println("Amount should be greater than 0.");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println("Invalid input, enter numbers only");
+            }
+        }
+
+            //creating transaction
+            Transaction transaction = new Transaction(date, time, description, vendor, amount);
+            //adding
+            transactions.add(transaction);
+            //writing to file
+            FileManager.writeTransaction(transaction);
+            //confirmation
+            System.out.println("Deposit added!");
+        }
+
     public static void makePayment(List<Transaction> transactions, Scanner scanner){
-        System.out.println("\n=== Payment Screen ===");
+        System.out.println("\n==== Payment Screen ====");
         //logging local date and time
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
@@ -96,7 +142,7 @@ public class TransactionService {
             Transaction transaction = transactions.get(i);
 
             //formatting
-            System.out.print(transaction.toString());
+            System.out.println(transaction.toString());
         }
     }
     public static void filterDeposits(List<Transaction> transactions) {
@@ -120,37 +166,59 @@ public class TransactionService {
         }
     }
 
-    public static void runReports(List<Transaction> transactions){
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+    public static void runReports(List<Transaction> transactions, Scanner scanner){
 
-        System.out.println("\n==== Reports Menu ====");
-        System.out.println("1.) Month to date inquiries");
-        System.out.println("2.) Previous month inquiries");
-        System.out.println("3.) Year to date inquiries");
-        System.out.println("4.) Previous year inquiries");
-        System.out.println("5.) Search by company name:");
-        System.out.println("Back to Ledger Menu(0)");
-        int choice = Integer.parseInt(scanner.nextLine());
+        int choice;
+        while(true) {
+            System.out.println("\n==== Reports Menu ====");
+            System.out.println("1.) Month to date inquiries");
+            System.out.println("2.) Previous month inquiries");
+            System.out.println("3.) Year to date inquiries");
+            System.out.println("4.) Previous year inquiries");
+            System.out.println("5.) Search by company name:");
+            System.out.println("0.) Back to Ledger Menu");
+            System.out.println("Enter a number to continue");
 
-        switch (choice){
-            case 1:
-                monthToDate(transactions);
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 0:
-                break;
-            default:
-                System.out.println("Please choose a number 0 - 5 to continue");
-                break;
+            //DEFENSE
+            try {
+                //.trim() removes any unnecessary spaces before after entries
+                choice = Integer.parseInt(scanner.nextLine().trim());
+
+                //defense
+                if (choice >= 0 && choice <= 5)
+                    break;
+                else {
+                    System.out.println("Please enter a number from 0 - 5.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Number from 0 - 5 only.");
+            }
         }
+
+
+            switch (choice) {
+                case 1:
+                    monthToDate(transactions);
+                    break;
+                case 2:
+                    prevMonth(transactions);
+                    break;
+                case 3:
+                    yearToDate(transactions);
+                    break;
+                case 4:
+                    prevYear(transactions);
+                    break;
+                case 5:
+                    searchByVendor(transactions, scanner);
+                    break;
+                case 0:
+                    //returning to previous screen
+                    return;
+                default:
+                    System.out.println("Please choose a number 0 - 5 to continue");
+                    break;
+            }
 
     }
     public static void monthToDate(List<Transaction> transactions){
@@ -228,8 +296,13 @@ public class TransactionService {
         for (int i = transactions.size() - 1; i >= 0; i--) {
             //get object at that index
             Transaction transaction = transactions.get(i);
+
+            //vendor
+            if (transaction.getVendor().equalsIgnoreCase(vendor)){
+                System.out.println(transaction);
+            }
         }
-        //vendor
+
     }
 
 
