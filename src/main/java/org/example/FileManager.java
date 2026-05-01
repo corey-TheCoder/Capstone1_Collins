@@ -19,11 +19,12 @@ public class FileManager {
                 //splitting at the pipe symbol
                 String[] parts = line.split("\\|");
 
-                LocalDate date = LocalDate.parse(parts[0]);
-                LocalTime time = LocalTime.parse(parts[1]);
-                String description = parts[2];
-                String vendor = parts[3];
-                double amount = Double.parseDouble(parts[4]);
+                //trim for extra spaces
+                LocalDate date = LocalDate.parse(parts[0].trim());
+                LocalTime time = LocalTime.parse(parts[1].trim());
+                String description = parts[2].trim();
+                String vendor = parts[3].trim();
+                double amount = Double.parseDouble(parts[4].trim().replace("$", ""));
 
                 //creating an object
                 Transaction transaction = new Transaction(date, time, description, vendor, amount);
@@ -47,7 +48,7 @@ public class FileManager {
                 fileWriter.write(System.lineSeparator());
             }
 
-            fileWriter.write(String.format("%s | %s | %s | %s | $%.2f", transaction.getDate(), transaction.getTime(), transaction.getDescription(),
+            fileWriter.write(String.format("%s|%s|%s|%s|$%.2f", transaction.getDate(), transaction.getTime(), transaction.getDescription(),
                     transaction.getVendor(), transaction.getAmount()));
 
             fileWriter.close();
