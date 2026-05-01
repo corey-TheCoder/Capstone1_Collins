@@ -25,7 +25,7 @@ public class Main {
             System.out.println(CYAN + "\t\tWELCOME TO THE LEDGER APP" + RESET);
             System.out.println(CYAN + "========================================" + RESET);
             System.out.println(CYAN + "\n=====================" + RESET);
-            System.out.println(CYAN + "     Home Menu    " + RESET);
+            System.out.println(CYAN + "     HOME MENU    " + RESET);
             System.out.println(CYAN + "=====================" + RESET);
             System.out.println("\nD.) to add a deposit");
             System.out.println("\nP.) to make a payment");

@@ -21,18 +21,19 @@ public class TransactionService {
     public static void ledgerScreen(List<Transaction> transactions, Scanner scanner){
         //ledger menu
         //title
-        System.out.println(CYAN + "\n=====================" + RESET);
-        System.out.println(CYAN + "     Ledger Menu     " + RESET);
-        System.out.println(CYAN + "=====================" + RESET);
-        while (true){
 
-            System.out.println("A.) Display all entries");
-            System.out.println("D.) Display deposits");
-            System.out.println("P.) Display due payments");
-            System.out.println("R.) Display Reports");
-            System.out.println("H.) Exit to HOME SCREEN");
+        while (true){
+            System.out.println(CYAN + "\n=====================" + RESET);
+            System.out.println(CYAN + "     Ledger Menu     " + RESET);
+            System.out.println(CYAN + "=====================" + RESET);
+
+            System.out.println("\nA.) Display all entries");
+            System.out.println("\nD.) Display deposits");
+            System.out.println("\nP.) Display due payments");
+            System.out.println("\nR.) Display Reports");
+            System.out.println("\nH.) Exit to HOME SCREEN");
             System.out.println("---------------------------");
-            System.out.print("Enter a letter to continue: ");
+            System.out.print("\nEnter a letter to continue: ");
             String choice = scanner.nextLine().trim().toUpperCase();
 
             switch (choice){
@@ -78,7 +79,7 @@ public class TransactionService {
                 break;
             }else
             {
-                System.out.println("\nThis field cannot be blank, try again");
+                System.out.println(RED + "\nThis field cannot be blank, try again" + RESET);
             }
         }
 
@@ -94,7 +95,7 @@ public class TransactionService {
                 break;
             }
             else {
-                System.out.println("\nThis field cannot be blank, try again");
+                System.out.println(RED + "\nThis field cannot be blank, try again" + RESET);
             }
         }
 
@@ -102,7 +103,7 @@ public class TransactionService {
         while (true) {
 
             //prompting amount
-            System.out.print("Enter amount: ");
+            System.out.print("\nEnter amount: ");
 
             try {
                 //attempt to parse
@@ -112,10 +113,10 @@ public class TransactionService {
                 if (amount > 0) {
                     break;
                 } else {
-                    System.out.println("\nAmount should be greater than 0.");
+                    System.out.println(RED + "\nAmount should be greater than 0." + RESET);
                 }
             } catch (NumberFormatException ex) {
-                System.out.println("\nInvalid input, enter numbers only");
+                System.out.println(RED + "\nInvalid input, enter numbers only" + RESET);
             }
         }
 
@@ -203,7 +204,7 @@ public class TransactionService {
     }
     // no input/ just list
     public static void displayEntries(List<Transaction> transactions){
-        System.out.println(CYAN + "\n================" + RESET);
+        System.out.println(CYAN + "\n===================" + RESET);
         System.out.println(CYAN + "   TRANSACTIONS " + RESET);
         System.out.println(CYAN + "==================" + RESET);
         //lists append to end, looping from the end for earlier results
@@ -257,12 +258,12 @@ public class TransactionService {
             System.out.println(CYAN + "\n=====================" + RESET);
             System.out.println(CYAN + "     Reports Menu    " + RESET);
             System.out.println(CYAN + "=====================" + RESET);
-            System.out.println("1.) Month to date inquiries");
-            System.out.println("2.) Previous month inquiries");
-            System.out.println("3.) Year to date inquiries");
-            System.out.println("4.) Previous year inquiries");
-            System.out.println("5.) Search by vendor: ");
-            System.out.println("0.) Back to Ledger Menu");
+            System.out.println("\n1.) Month to date inquiries");
+            System.out.println("\n2.) Previous month inquiries");
+            System.out.println("\n3.) Year to date inquiries");
+            System.out.println("\n4.) Previous year inquiries");
+            System.out.println("\n5.) Search by vendor: ");
+            System.out.println("\n0.) Back to Ledger Menu");
 
 
             int choice;
